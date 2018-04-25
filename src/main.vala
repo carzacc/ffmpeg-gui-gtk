@@ -18,7 +18,7 @@
 
 class EasyFFmpeg: Gtk.Window {
 	Gtk.FileChooserButton input;
-	Gtk.FileChooserButton output;
+	Gtk.FileChooserDialog output;
 	public EasyFFmpeg() {
 		this.destroy.connect(Gtk.main_quit);
 		this.set_default_size(500, 500);
@@ -31,6 +31,17 @@ class EasyFFmpeg: Gtk.Window {
 
 		input = new Gtk.FileChooserButton("File di Input", Gtk.FileChooserAction.OPEN);
 
+		var tasto_output = new Gtk.Button.with_label("Scegli file di Output");
+
+
+		output = new Gtk.FileChooserDialog("File di Output", this,Gtk.FileChooserAction.SAVE,
+								Gtk.Stock.CANCEL, Gtk.ResponseType.CANCEL,
+								Gtk.Stock.SAVE, Gtk.ResponseType.ACCEPT);
+
+		tasto_output.clicked.connect(apri_salvataggio);
+
+
+
 		// output = new Gtk.FileChooserButton("File di Output", Gtk.FileChooserAction.OPEN);
 
 		// output.set_action(Gtk.FileChooserAction.SAVE);
@@ -38,7 +49,7 @@ class EasyFFmpeg: Gtk.Window {
 		box.pack_start(input_label);
 		box.pack_start(input);
 		box.pack_start(output_label);
-		// box.pack_start(output);
+		box.pack_start(tasto_output);
 
 		var avvia = new Gtk.Button.with_label("Avvia Conversione");
 		avvia.clicked.connect(avvia_conversione);
@@ -47,8 +58,11 @@ class EasyFFmpeg: Gtk.Window {
 		this.show_all();
 	}
 	private void avvia_conversione(Gtk.Button tasto) {
-		stdout.printf("conversione %s\n", input.get_filename());
-		comandi.converti_file_aac(input.get_filename(), tasto);
+		stdout.printf("conversione %s in %s\n", input.get_filename(), output.get_filename());
+		comandi.converti_file(input.get_filename(), output.get_filename(), tasto);
+	}
+	private void apri_salvataggio() {
+		output.run();
 	}
 }
 
